@@ -3,8 +3,9 @@ package main
 import (
 	"crypto/sha256"
 	"encoding/hex"
-	"fmt"
 	"time"
+
+	"github.com/davecgh/go-spew/spew"
 )
 
 var blockChain []Block
@@ -16,8 +17,8 @@ type Block struct {
 	timeStamp string
 }
 
+// Generating a digital fingerprint of a block
 func calculateHash (block Block) string{
-	// Generating a digital fingerprint of input block
 	h := sha256.New()
 	unique := block.data + block.prevHash + block.timeStamp
 	h.Write([]byte(unique))
@@ -25,12 +26,17 @@ func calculateHash (block Block) string{
 	return hex.EncodeToString(h.Sum(nil))
 }
 
+func getLastBlock () Block{
+	return blockChain[len(blockChain) - 1]
+}
+
 func addNewBlock (data string) {
 	var oldBlockHash string
 	if len(blockChain) > 0 {
-		oldBlock := blockChain[len(blockChain) - 1]
+		oldBlock := getLastBlock()
 		oldBlockHash = oldBlock.hash
 	} else {
+		// Genesis block has no prev hash
 		oldBlockHash = ""
 	}
 	
@@ -45,10 +51,7 @@ func addNewBlock (data string) {
 }
 
 func main () {
-	fmt.Println(blockChain)
 	addNewBlock("Genesis block")
-	fmt.Println(blockChain)
-
 	addNewBlock("2nd block")
-	fmt.Println(blockChain)
+	spew.Dump(blockChain)
 }
