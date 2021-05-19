@@ -17,8 +17,7 @@ import (
 )
 
 var blockChain []Block
-nodes := map[string] bool
-const difficulty int = 4 // Changes how long it takes to mine one new block
+const difficulty int = 2 // Changes how long it takes to mine one new block
 
 type Block struct {
 	Index int
@@ -175,6 +174,9 @@ func mineBlockHandler (w http.ResponseWriter, r *http.Request) {
 }
 
 func main () {
+	wallet := initializeNewWallet()
+	cipherText := encryptTransaction(wallet.PublicKey)
+	decryptTransaction(wallet.PrivateKey, cipherText)
 	addNewBlock("Genesis block")
 	addNewBlock("2nd block")
 	addNewBlock("3rd block")
