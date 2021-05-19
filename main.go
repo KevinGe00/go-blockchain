@@ -5,6 +5,7 @@ import (
 	"encoding/hex"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
@@ -25,6 +26,11 @@ type Block struct {
 	Data string
 	TimeStamp string
 	Nonce int
+}
+
+// Used for unmarshalling POST request body
+type Data_ struct {
+	Data string
 }
 
 // Generating a digital fingerprint of a block
@@ -65,7 +71,7 @@ func mineNewBlock (block *Block) {
 	block.Hash = calculateHash(*block)
 }
 
-func addNewBlock (data string) {
+func addNewBlock (data string) Block{
 	var lastBlockHash string
 	var index int
 	if len(blockChain) > 0 {
@@ -82,6 +88,8 @@ func addNewBlock (data string) {
 	// Only once our new block has proof-of-work through mining do we add it to the blockchain
 	mineNewBlock(&newBlock)
 	blockChain = append(blockChain, newBlock)
+
+	return newBlock
 }
 
 // Checks if anyone has tried tampering with the blockchain
@@ -114,16 +122,19 @@ func handleRequests() {
 	r := mux.NewRouter()
 
 	// Paths
-    r.HandleFunc("/blockchain", getBlockchainHandler)
-	r.HandleFunc("/blockchain/{index}", getBlockHandler)
+	r.HandleFunc("/mine", mineBlockHandler).Methods("POST")
+	r.HandleFunc("/{index}", getBlockHandler)
+    r.HandleFunc("/", getBlockchainHandler)
 
-	log.Fatal(http.ListenAndServe(":10000", r))
+	// Run the server
+	port := ":10000"
+	fmt.Println("\nListening on port " + port[1:])
+	log.Fatal(http.ListenAndServe(port, r))
 }
 
 // View entire blockchain
 func getBlockchainHandler(w http.ResponseWriter, r *http.Request){
     json.NewEncoder(w).Encode(blockChain)
-    fmt.Println("Endpoint Hit: /blockchain")
 }
 
 // View single block on blockchain
@@ -135,6 +146,26 @@ func getBlockHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	} 
 	json.NewEncoder(w).Encode(blockChain[i])
+}
+
+func mineBlockHandler (w http.ResponseWriter, r *http.Request) {
+	reqBody, _ := ioutil.ReadAll(r.Body)
+
+	var postData Data_
+	json.Unmarshal(reqBody, &postData)
+
+	newBlock := addNewBlock(postData.Data) // Mine for new block
+
+	response, err := json.MarshalIndent(newBlock, "", "  ")
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("HTTP 500: Internal Server Error"))
+		return
+	}
+
+	w.WriteHeader(http.StatusCreated)
+	w.Write(response)
+	fmt.Println("New block mined and added to block chain")
 }
 
 func main () {
