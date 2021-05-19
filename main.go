@@ -17,6 +17,7 @@ import (
 )
 
 var blockChain []Block
+nodes := map[string] bool
 const difficulty int = 4 // Changes how long it takes to mine one new block
 
 type Block struct {
@@ -109,6 +110,7 @@ func isBlockChainValid() bool {
 				return false
 			}
 			if (currBlock.Hash[:difficulty] != proofPrefix) {
+				// Work has not been done yet
 				return false
 			}
 		} 
@@ -134,6 +136,7 @@ func handleRequests() {
 
 // View entire blockchain
 func getBlockchainHandler(w http.ResponseWriter, r *http.Request){
+	w.WriteHeader(http.StatusOK)
     json.NewEncoder(w).Encode(blockChain)
 }
 
@@ -142,9 +145,12 @@ func getBlockHandler(w http.ResponseWriter, r *http.Request) {
 	vars := mux.Vars(r)
     i, _ := strconv.Atoi(vars["index"])
 	if (i < 0 || len(blockChain) <= i) {
-		fmt.Fprintf(w, "Index out of range")
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("HTTP 400: Bad Request - Index out of range"))
 		return
 	} 
+
+	w.WriteHeader(http.StatusOK)
 	json.NewEncoder(w).Encode(blockChain[i])
 }
 
@@ -158,8 +164,8 @@ func mineBlockHandler (w http.ResponseWriter, r *http.Request) {
 
 	response, err := json.MarshalIndent(newBlock, "", "  ")
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte("HTTP 500: Internal Server Error"))
+		w.WriteHeader(http.StatusBadRequest)
+		w.Write([]byte("HTTP 400: Bad Request"))
 		return
 	}
 
