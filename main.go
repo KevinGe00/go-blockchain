@@ -36,7 +36,7 @@ type Data_ struct {
 // Generating a digital fingerprint of a block
 func calculateHash (block Block) string{
 	h := sha256.New()
-	unique := block.Data + block.PrevHash + block.TimeStamp + string(block.Nonce)
+	unique := block.Data + block.PrevHash + block.TimeStamp + strconv.Itoa(block.Nonce)
 	h.Write([]byte(unique))
 	
 	return hex.EncodeToString(h.Sum(nil))
@@ -174,9 +174,30 @@ func mineBlockHandler (w http.ResponseWriter, r *http.Request) {
 }
 
 func main () {
-	wallet := initializeNewWallet()
-	cipherText := encryptTransaction(wallet.PublicKey)
-	decryptTransaction(wallet.PrivateKey, cipherText)
+	wallet1 := initializeNewWallet()
+	wallet2 := initializeNewWallet()
+
+	cipherText := encryptTransaction(wallet1.PublicKey)
+	decryptTransaction(wallet1.PrivateKey, cipherText)
+	
+	transaction := Transaction{
+		Sender: wallet1.PublicKey,
+		Receiver: wallet2.PublicKey,
+		Amount: 10,
+	}
+
+	hashSum := generateUniqueTransactionHashSum(transaction)
+	sig := generateSignature(wallet1.PrivateKey, hashSum)
+	transaction.Signature = sig
+
+	fmt.Println(verifySignature(sig, transaction, hashSum))
+	
+	// Alter hashSum then try verifying again
+	transaction.Amount = 10000
+	hashSum = generateUniqueTransactionHashSum(transaction)
+	fmt.Println(verifySignature(sig, transaction, hashSum))
+
+	// Testing blockchain functions
 	addNewBlock("Genesis block")
 	addNewBlock("2nd block")
 	addNewBlock("3rd block")
