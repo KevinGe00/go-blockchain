@@ -174,6 +174,7 @@ func mineBlockHandler (w http.ResponseWriter, r *http.Request) {
 }
 
 func main () {
+	// Testing encryption/transaction functions
 	wallet1 := initializeNewWallet()
 	wallet2 := initializeNewWallet()
 
@@ -185,9 +186,8 @@ func main () {
 		Receiver: wallet2.PublicKey,
 		Amount: 10,
 	}
-
-	hashSum := generateUniqueTransactionHashSum(transaction)
-	sig := generateSignature(wallet1.PrivateKey, hashSum)
+	
+	sig, hashSum := signTransaction(wallet1.PrivateKey, transaction)
 	transaction.Signature = sig
 
 	fmt.Println(verifySignature(sig, transaction, hashSum))
@@ -196,6 +196,7 @@ func main () {
 	transaction.Amount = 10000
 	hashSum = generateUniqueTransactionHashSum(transaction)
 	fmt.Println(verifySignature(sig, transaction, hashSum))
+
 
 	// Testing blockchain functions
 	addNewBlock("Genesis block")

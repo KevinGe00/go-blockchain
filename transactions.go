@@ -18,6 +18,21 @@ type Transaction struct {
 	Sender, Receiver *rsa.PublicKey
 	Signature []byte
 	Amount int
+	Inputs []TransactionInput 	// Proof that send has funds to send
+	Outputs []TransactionOutput //
+}
+
+type TransactionInput struct {
+	TransactionOutputId string
+	UTXO TransactionOutput // Unspent Transaction Output
+}
+
+// These are referenced when new transactions are made as proof the sender has coins
+type TransactionOutput struct {
+	Id string
+	Receiver *rsa.PublicKey; 
+	Amout int;
+	parentTransactionId string;
 }
 
 func initializeNewWallet() Wallet{
@@ -78,7 +93,10 @@ func generateUniqueTransactionHashSum(transaction Transaction) []byte{
 }
 
 // Sign unique data(msgHashSum) using a private key
-func generateSignature(privateKey *rsa.PrivateKey, msgHashSum []byte) []byte{
+// Returns the signature and  data that was signed
+func signTransaction(privateKey *rsa.PrivateKey, transaction Transaction) ([]byte, []byte){
+	msgHashSum := generateUniqueTransactionHashSum(transaction)
+
 	signature, err := rsa.SignPSS(
 		rand.Reader, 
 		privateKey, // private key of sender
@@ -91,7 +109,7 @@ func generateSignature(privateKey *rsa.PrivateKey, msgHashSum []byte) []byte{
 		panic(err)
 	}
 
-	return signature
+	return signature, msgHashSum
 }
 
 // Verify that the signature is indeed signed of the input data(msgHashSum) by the owner of the sender in the transaction
