@@ -12,7 +12,6 @@ import (
 	"strings"
 	"time"
 
-	"github.com/davecgh/go-spew/spew"
 	"github.com/gorilla/mux"
 )
 
@@ -174,39 +173,5 @@ func mineBlockHandler (w http.ResponseWriter, r *http.Request) {
 }
 
 func main () {
-	// Testing encryption/transaction functions
-	wallet1 := initializeNewWallet()
-	wallet2 := initializeNewWallet()
-
-	cipherText := encryptTransaction(wallet1.PublicKey)
-	decryptTransaction(wallet1.PrivateKey, cipherText)
-	
-	transaction := Transaction{
-		Sender: wallet1.PublicKey,
-		Receiver: wallet2.PublicKey,
-		Amount: 10,
-	}
-	
-	sig, hashSum := signTransaction(wallet1.PrivateKey, transaction)
-	transaction.Signature = sig
-
-	fmt.Println(verifySignature(sig, transaction, hashSum))
-	
-	// Alter hashSum then try verifying again
-	transaction.Amount = 10000
-	hashSum = generateUniqueTransactionHashSum(transaction)
-	fmt.Println(verifySignature(sig, transaction, hashSum))
-
-
-	// Testing blockchain functions
-	addNewBlock("Genesis block")
-	addNewBlock("2nd block")
-	addNewBlock("3rd block")
-	spew.Dump(blockChain)
-	
-	spew.Dump(isBlockChainValid())	// True
-	blockChain[1].Data = "I've messed with the blockchain"
-	spew.Dump(isBlockChainValid()) // False
-
 	handleRequests()
 }

@@ -55,7 +55,7 @@ func encryptTransaction(publicKey *rsa.PublicKey) []byte{
 		sha256.New(),
 		rand.Reader,
 		publicKey,
-		[]byte("secret message"),
+		[]byte("transaction data"),
 	nil)
 	if err != nil {
 		panic(err)
@@ -93,7 +93,7 @@ func generateUniqueTransactionHashSum(transaction Transaction) []byte{
 }
 
 // Sign unique data(msgHashSum) using a private key
-// Returns the signature and  data that was signed
+// Returns the signature and data that was signed
 func signTransaction(privateKey *rsa.PrivateKey, transaction Transaction) ([]byte, []byte){
 	msgHashSum := generateUniqueTransactionHashSum(transaction)
 
