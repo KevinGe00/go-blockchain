@@ -1,0 +1,141 @@
+{
+	"info": {
+		"_postman_id": "7af754df-28ba-4c0a-bce0-e90c01d98caa",
+		"name": "go-blockchain",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Mine for a block to be added onto the blockchain, the genesis block",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\": \"genesis block\"}"
+				},
+				"url": {
+					"raw": "http://localhost:10000/mine",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"mine"
+					]
+				},
+				"description": "Mine for a block to be added onto the blockchain with the data: \"test\""
+			},
+			"response": []
+		},
+		{
+			"name": "Get a snapshot of the blockchain and verify that all 3 blocks you just mined are now on the chain",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:10000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						""
+					]
+				},
+				"description": "Get a snapshot of the blockchain and verify that the block you just mined is now on the chain"
+			},
+			"response": []
+		},
+		{
+			"name": "Mine for another block to be added onto the blockchain",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\": \"secret crypto transaction\"}"
+				},
+				"url": {
+					"raw": "http://localhost:10000/mine",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"mine"
+					]
+				},
+				"description": "Mine for a block to be added onto the blockchain with the data: \"test\""
+			},
+			"response": []
+		},
+		{
+			"name": "Mine for a third block to be added onto the blockchain",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"data\": \"block3\"}"
+				},
+				"url": {
+					"raw": "http://localhost:10000/mine",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"mine"
+					]
+				},
+				"description": "Mine for a block to be added onto the blockchain with the data: \"test\""
+			},
+			"response": []
+		},
+		{
+			"name": "Get a snapshot of the blockchain and verify that the block you just mined is now on the chain Copy",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:10000/",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						""
+					]
+				},
+				"description": "Get a snapshot of the blockchain and verify that the block you just mined is now on the chain"
+			},
+			"response": []
+		},
+		{
+			"name": "Get a specific block on the blockchain by index",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:10000/1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "10000",
+					"path": [
+						"1"
+					]
+				},
+				"description": "Get a snapshot of the blockchain and verify that the block you just mined is now on the chain"
+			},
+			"response": []
+		}
+	]
+}
