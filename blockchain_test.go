@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// Testing adding and mining for new blocks
 func TestAddNewBlock(t *testing.T){
 	addNewBlock("Genesis block")
 	addNewBlock("2nd block")
@@ -14,6 +15,7 @@ func TestAddNewBlock(t *testing.T){
 	}
 }
 
+// Testing the block chain validation algorithm works as expected
 func TestIsBlockChainValid(t *testing.T){
 	// Block chain has 3 exisiting blocks already from TestAddNewBlock
 
@@ -22,8 +24,12 @@ func TestIsBlockChainValid(t *testing.T){
     }
 
 	blockChain[1].Data = "I've messed with the blockchain"
-
     if isBlockChainValid() {
-        t.Errorf("Block chain has been tampered with, expected false upon validation but got true")
+        t.Errorf("Block chain data has been tampered with, expected false upon validation but got true")
+    }
+
+	blockChain[0].Index = 10000
+	 if isBlockChainValid() {
+        t.Errorf("Block chain order has been tampered with, expected false upon validation but got true")
     }
 }

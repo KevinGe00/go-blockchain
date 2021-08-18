@@ -4,6 +4,7 @@ import (
 	"testing"
 )
 
+// Testing the flow of encrypting a transaction using a public key and being able to decrypt the ciphertext to get back the encrypted (transaction) data
 func TestTransactionEncryptionAndDecryption(t *testing.T){
 	wallet1 := initializeNewWallet()
 
@@ -18,7 +19,8 @@ func TestTransactionEncryptionAndDecryption(t *testing.T){
 	}
 }
 
-func TestDSFS(t *testing.T){
+// Testing the flow of signing some unique data using a private key and the verification of the signature
+func TestSignAndVerifySignature(t *testing.T){
 	wallet1 := initializeNewWallet()
 	wallet2 := initializeNewWallet()
 
